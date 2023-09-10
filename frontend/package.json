@@ -14,7 +14,8 @@
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.5",
     "reactflow": "^11.8.3",
-    "uuid": "^9.0.0"
+    "uuid": "^9.0.0",
+    "zustand": "^4.4.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.15",

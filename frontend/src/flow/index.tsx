@@ -1,45 +1,40 @@
 import { useState, useRef, useCallback, useMemo } from "react";
 import ReactFlow, {
   ReactFlowProvider,
-  addEdge,
-  useNodesState,
-  useEdgesState,
   Controls,
-  Connection,
   ReactFlowInstance,
   Node,
 } from "reactflow";
+import { shallow } from "zustand/shallow";
+
 import "reactflow/dist/style.css";
 
+import useBoundStore, { StorageState } from "./lib/storage";
 import Sidebar from "./Sidebar";
-import StartNode, { StartNodeData } from "./nodes/StartNode";
+import StartNode from "./nodes/StartNode";
 
 import "./Flow.css";
-import NodeTypes from "./lib/NodeTypes";
+import NodeTypes from "./lib/node.types";
 import generateNodeId from "./lib/helpers/generate.node.id";
 
-const initialNodes: Node[] = [
-  {
-    id: "1",
-    type: NodeTypes.StartNode,
-    data: { inputPath: "" },
-    position: { x: 150, y: 0 },
-  } as Node<StartNodeData>,
-];
+const selector = (state: StorageState) => ({
+  nodes: state.nodes,
+  edges: state.edges,
+  appendNodes: state.appendNodes,
+  onNodesChange: state.onNodesChange,
+  onEdgesChange: state.onEdgesChange,
+  onConnect: state.onConnect,
+});
 
 const Flow = () => {
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState([]);
+  const { nodes, edges, appendNodes, onNodesChange, onEdgesChange, onConnect } =
+    useBoundStore(selector, shallow);
+
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
 
   const nodeTypes = useMemo(() => ({ [NodeTypes.StartNode]: StartNode }), []);
-
-  const onConnect = useCallback(
-    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
-    []
-  );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
@@ -71,7 +66,7 @@ const Flow = () => {
         data: undefined,
       };
 
-      setNodes((nds) => nds.concat(newNode));
+      appendNodes([newNode]);
     },
     [reactFlowInstance]
   );

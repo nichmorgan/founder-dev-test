@@ -1,5 +1,5 @@
 import React from "react";
-import NodeTypes from "./lib/NodeTypes";
+import NodeTypes from "./lib/node.types";
 
 export default () => {
   const onDragStart = (
