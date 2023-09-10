@@ -1,5 +1,5 @@
-import { useCallback } from "react";
-import { Handle, Position, WrapNodeProps } from "reactflow";
+import { useCallback, useState } from "react";
+import { Handle, Position } from "reactflow";
 
 // import "./StartNode.css";
 
@@ -7,15 +7,13 @@ export interface StartNodeData {
   inputPath: string;
 }
 
-const DEFAULT_PROPS: Pick<WrapNodeProps<StartNodeData>, "data"> = {
-  data: { inputPath: "" },
-};
+export default function StartNode() {
+  const [_path, setPath] = useState("");
 
-export default function StartNode({ data } = DEFAULT_PROPS) {
   const onChange = useCallback<React.ChangeEventHandler<HTMLInputElement>>(
     (event) => {
       event.preventDefault();
-      data.inputPath = event.target.value;
+      setPath(event.target.value);
     },
     []
   );
