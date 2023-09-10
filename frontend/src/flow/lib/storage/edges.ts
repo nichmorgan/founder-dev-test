@@ -1,8 +1,6 @@
 import { StateCreator } from "zustand";
 import {
-  Connection,
   Edge,
-  EdgeChange,
   OnConnect,
   OnEdgesChange,
   addEdge,
@@ -16,11 +14,11 @@ type EdgesState = {
 };
 
 const createEdgesSlice: StateCreator<EdgesState> = (set, get) => ({
-  edges: [] as Edge[],
-  onEdgesChange: (changes: EdgeChange[]) => {
+  edges: [],
+  onEdgesChange: (changes) => {
     set({ edges: applyEdgeChanges(changes, get().edges) });
   },
-  onConnect: (connection: Connection) => {
+  onConnect: (connection) => {
     set({ edges: addEdge(connection, get().edges) });
   },
 });

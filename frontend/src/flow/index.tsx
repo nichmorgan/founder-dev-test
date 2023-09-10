@@ -20,6 +20,7 @@ import generateNodeId from "./lib/helpers/generate.node.id";
 const selector = (state: StorageState) => ({
   nodes: state.nodes,
   edges: state.edges,
+  updateNodeData: state.updateNodeData,
   appendNodes: state.appendNodes,
   onNodesChange: state.onNodesChange,
   onEdgesChange: state.onEdgesChange,
@@ -63,7 +64,7 @@ const Flow = () => {
         id: generateNodeId(),
         type,
         position,
-        data: undefined,
+        data: {},
       };
 
       appendNodes([newNode]);
