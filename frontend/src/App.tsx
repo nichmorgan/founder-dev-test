@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useMemo } from "react";
 import ReactFlow, {
   ReactFlowProvider,
   addEdge,
@@ -10,35 +10,39 @@ import ReactFlow, {
   ReactFlowInstance,
   Node,
   XYPosition,
+  applyNodeChanges,
+  NodeChange,
 } from "reactflow";
 import "reactflow/dist/style.css";
 
 import Sidebar from "./Sidebar";
+import StartNode, { StartNodeData } from "./StartNode";
 
-import "./index.css";
+import "./Flow.css";
 import "./App.css";
+import NodeTypes from "./lib/NodeTypes";
+import generateNodeId from "./lib/helpers/generate.node.id";
 
 const initialNodes: Node[] = [
   {
     id: "1",
-    type: "input",
-    data: { label: "input node" },
-    position: { x: 250, y: 5 },
-  },
+    type: NodeTypes.StartNode,
+    data: { inputPath: "" },
+    position: { x: 150, y: 0 },
+  } as Node<StartNodeData>,
 ];
 
-let id = 0;
-const getId = () => `dndnode_${id++}`;
-
-const DnDFlow = () => {
+const Flow = () => {
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState([]);
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
 
+  const nodeTypes = useMemo(() => ({ [NodeTypes.StartNode]: StartNode }), []);
+
   const onConnect = useCallback(
-    (params: Edge | Connection) => setEdges((eds) => addEdge(params, eds)),
+    (connection: Connection) => setEdges((eds) => addEdge(connection, eds)),
     []
   );
 
@@ -64,11 +68,12 @@ const DnDFlow = () => {
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
+
       const newNode: Node = {
-        id: getId(),
+        id: generateNodeId(),
         type,
-        position: position as XYPosition,
-        data: { label: `${type} node` },
+        position,
+        data: undefined,
       };
 
       setNodes((nds) => nds.concat(newNode));
@@ -77,7 +82,7 @@ const DnDFlow = () => {
   );
 
   return (
-    <div className="dndflow">
+    <div className="flow">
       <ReactFlowProvider>
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
           <ReactFlow
@@ -89,6 +94,7 @@ const DnDFlow = () => {
             onInit={setReactFlowInstance}
             onDrop={onDrop}
             onDragOver={onDragOver}
+            nodeTypes={nodeTypes}
             fitView
           >
             <Controls />
@@ -100,4 +106,4 @@ const DnDFlow = () => {
   );
 };
 
-export default DnDFlow;
+export default Flow;

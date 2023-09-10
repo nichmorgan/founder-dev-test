@@ -1,4 +1,5 @@
 import React from "react";
+import NodeTypes from "./lib/NodeTypes";
 
 export default () => {
   const onDragStart = (
@@ -15,21 +16,21 @@ export default () => {
         You can drag these nodes to the pane on the right.
       </div>
       <div
-        className="dndnode input"
-        onDragStart={(event) => onDragStart(event, "input")}
+        className="node start-node"
+        onDragStart={(event) => onDragStart(event, NodeTypes.StartNode)}
         draggable
       >
-        Input Node
+        Start Node
       </div>
       <div
-        className="dndnode"
+        className="node"
         onDragStart={(event) => onDragStart(event, "default")}
         draggable
       >
         Default Node
       </div>
       <div
-        className="dndnode output"
+        className="node output"
         onDragStart={(event) => onDragStart(event, "output")}
         draggable
       >
