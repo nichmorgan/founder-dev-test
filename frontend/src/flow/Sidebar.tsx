@@ -30,11 +30,11 @@ export default () => {
         If Node
       </div>
       <div
-        className="node output"
-        onDragStart={(event) => onDragStart(event, "output")}
+        className="node set"
+        onDragStart={(event) => onDragStart(event, NodeTypes.SetNode)}
         draggable
       >
-        Output Node
+        Set Node
       </div>
     </aside>
   );

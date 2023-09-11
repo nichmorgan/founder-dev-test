@@ -2,6 +2,7 @@ import { Handle, NodeProps, Position } from "reactflow";
 import useBoundStore, { StorageState } from "../lib/storage";
 
 import "./IfNode.css";
+import { useState } from "react";
 
 const OPERATORS_SET = new Set(["=", "<", "<=", ">=", ">"]);
 export type IfOperator = typeof OPERATORS_SET;
@@ -17,15 +18,16 @@ export interface IfNodeData {
 }
 
 const selector = (state: StorageState) => ({
-  nodes: state.nodes,
   updateNodeData: state.updateNodeData<IfNodeData>,
 });
 
 export default function IfNode({ id, data }: NodeProps<IfNodeData>) {
+  const [state, setState] = useState({ condition: { ...data?.condition } });
   const { updateNodeData } = useBoundStore(selector);
 
   const onChangeCondition = (field: keyof IfNodeCondition, value: unknown) => {
-    Object.assign(data.condition, { [field]: value });
+    Object.assign(state.condition, { [field]: value });
+    setState(state);
     updateNodeData(id, data);
   };
 

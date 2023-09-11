@@ -16,6 +16,7 @@ import "./Flow.css";
 import NodeTypes from "./lib/node.types";
 import generateNodeId from "./lib/helpers/generate.node.id";
 import IfNode from "./nodes/IfNode";
+import SetNode from "./nodes/SetNode";
 
 const selector = (state: StorageState) => ({
   nodes: state.nodes,
@@ -36,7 +37,11 @@ const Flow = () => {
     useState<ReactFlowInstance | null>(null);
 
   const nodeTypes = useMemo(
-    () => ({ [NodeTypes.StartNode]: StartNode, [NodeTypes.IfNode]: IfNode }),
+    () => ({
+      [NodeTypes.StartNode]: StartNode,
+      [NodeTypes.IfNode]: IfNode,
+      [NodeTypes.SetNode]: SetNode,
+    }),
     []
   );
 
