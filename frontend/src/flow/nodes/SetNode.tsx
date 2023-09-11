@@ -1,22 +1,32 @@
 import { Handle, NodeProps, Position } from "reactflow";
 import "./SetNode.css";
 import useBoundStore, { StorageState } from "../lib/storage";
+import * as R from "ramda";
 
 export interface SetNodeData {
   path: string;
-  value: unknown;
+  value: string;
 }
 
 const selector = (state: StorageState) => ({
+  getNode: state.getNode<SetNodeData>,
   updateNodeData: state.updateNodeData<SetNodeData>,
 });
 
-export default function SetNode({ id, data }: NodeProps<SetNodeData>) {
-  const { updateNodeData } = useBoundStore(selector);
+export default function SetNode({ id }: NodeProps<SetNodeData>) {
+  const { updateNodeData, getNode } = useBoundStore(selector);
 
-  const onChangeCondition = (field: keyof SetNodeData, value: unknown) => {
-    Object.assign(data, { [field]: value });
-    updateNodeData(id, data);
+  const node = getNode(id);
+  const { path, value } = R.pathOr<SetNodeData>(
+    { path: "", value: "" },
+    ["data"],
+    node
+  );
+
+  const onChangeCondition = (field: keyof SetNodeData, value: string) => {
+    if (!node) return;
+    const newData = R.assocPath(["data", field], value, node);
+    updateNodeData(id, newData.data);
   };
 
   return (
@@ -27,13 +37,14 @@ export default function SetNode({ id, data }: NodeProps<SetNodeData>) {
         <input
           id={`${id}_setPath`}
           name="setPath"
-          defaultValue={""}
+          value={path}
           onChange={(evt) => onChangeCondition("path", evt.target.value)}
         />
 
         <label htmlFor={`${id}_value`}>Value:</label>
         <input
           id={`${id}_value`}
+          value={value}
           name="value"
           onChange={(evt) => onChangeCondition("value", evt.target.value)}
         />

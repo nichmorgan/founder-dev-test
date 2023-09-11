@@ -1,10 +1,5 @@
-import { useState, useRef, useCallback, useMemo } from "react";
-import ReactFlow, {
-  ReactFlowProvider,
-  Controls,
-  ReactFlowInstance,
-  Node,
-} from "reactflow";
+import { useRef, useCallback, useMemo } from "react";
+import ReactFlow, { ReactFlowProvider, Controls, Node } from "reactflow";
 
 import "reactflow/dist/style.css";
 
@@ -17,10 +12,15 @@ import NodeTypes from "./lib/node.types";
 import generateNodeId from "./lib/helpers/generate.node.id";
 import IfNode from "./nodes/IfNode";
 import SetNode from "./nodes/SetNode";
+import StoragePanel from "./StoragePanel";
 
 const selector = (state: StorageState) => ({
   nodes: state.nodes,
   edges: state.edges,
+  flowInstance: state.flowInstance,
+  setFlowInstance: state.setFlowInstance,
+  setNodes: state.setNodes,
+  setEdges: state.setEdges,
   updateNodeData: state.updateNodeData,
   appendNodes: state.appendNodes,
   onNodesChange: state.onNodesChange,
@@ -30,11 +30,16 @@ const selector = (state: StorageState) => ({
 
 const Flow = () => {
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
-  const { nodes, edges, appendNodes, onNodesChange, onEdgesChange, onConnect } =
-    useBoundStore(selector);
-
-  const [reactFlowInstance, setReactFlowInstance] =
-    useState<ReactFlowInstance | null>(null);
+  const {
+    nodes,
+    edges,
+    flowInstance,
+    setFlowInstance,
+    appendNodes,
+    onNodesChange,
+    onEdgesChange,
+    onConnect,
+  } = useBoundStore(selector);
 
   const nodeTypes = useMemo(
     () => ({
@@ -59,11 +64,11 @@ const Flow = () => {
       // check if the dropped element is valid
       if (typeof type === "undefined" || !type) return;
       if (reactFlowWrapper.current === null) return;
-      if (reactFlowInstance === null) return;
+      if (flowInstance === null) return;
 
       const reactFlowBounds = reactFlowWrapper.current.getBoundingClientRect();
 
-      const position = reactFlowInstance.project({
+      const position = flowInstance.project({
         x: event.clientX - reactFlowBounds.left,
         y: event.clientY - reactFlowBounds.top,
       });
@@ -77,7 +82,7 @@ const Flow = () => {
 
       appendNodes([newNode]);
     },
-    [reactFlowInstance]
+    [flowInstance]
   );
 
   return (
@@ -85,17 +90,18 @@ const Flow = () => {
       <ReactFlowProvider>
         <div className="reactflow-wrapper" ref={reactFlowWrapper}>
           <ReactFlow
-            nodes={nodes}
+            nodes={Object.values(nodes)}
             edges={edges}
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
-            onInit={setReactFlowInstance}
+            onInit={setFlowInstance}
             onDrop={onDrop}
             onDragOver={onDragOver}
             nodeTypes={nodeTypes}
             fitView
           >
+            <StoragePanel />
             <Controls />
           </ReactFlow>
         </div>

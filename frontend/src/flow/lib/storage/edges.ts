@@ -9,12 +9,16 @@ import {
 
 type EdgesState = {
   edges: Edge[];
+  setEdges: (edges: Edge[]) => void;
   onEdgesChange: OnEdgesChange;
   onConnect: OnConnect;
 };
 
 const createEdgesSlice: StateCreator<EdgesState> = (set, get) => ({
   edges: [],
+  setEdges(edges) {
+    set({ edges });
+  },
   onEdgesChange: (changes) => {
     set({ edges: applyEdgeChanges(changes, get().edges) });
   },

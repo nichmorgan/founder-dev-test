@@ -1,6 +1,8 @@
 import React from "react";
 import NodeTypes from "./lib/node.types";
 
+import "./Sidebar.css";
+
 export default () => {
   const onDragStart = (
     event: React.DragEvent<HTMLDivElement>,

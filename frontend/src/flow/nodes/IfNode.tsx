@@ -1,11 +1,11 @@
 import { Handle, NodeProps, Position } from "reactflow";
 import useBoundStore, { StorageState } from "../lib/storage";
+import * as R from "ramda";
 
 import "./IfNode.css";
-import { useState } from "react";
 
-const OPERATORS_SET = new Set(["=", "<", "<=", ">=", ">"]);
-export type IfOperator = typeof OPERATORS_SET;
+const OPERATORS_LIST = ["=", "<", "<=", ">=", ">"] as const;
+export type IfOperator = (typeof OPERATORS_LIST)[number];
 
 export interface IfNodeCondition {
   path: string;
@@ -18,17 +18,23 @@ export interface IfNodeData {
 }
 
 const selector = (state: StorageState) => ({
+  getNode: state.getNode,
   updateNodeData: state.updateNodeData<IfNodeData>,
 });
 
-export default function IfNode({ id, data }: NodeProps<IfNodeData>) {
-  const [state, setState] = useState({ condition: { ...data?.condition } });
-  const { updateNodeData } = useBoundStore(selector);
+export default function IfNode({ id }: NodeProps<Partial<IfNodeData>>) {
+  const { getNode, updateNodeData } = useBoundStore(selector);
+  const node = getNode<IfNodeData>(id);
+  const { path, operator, value } = R.pathOr<IfNodeCondition>(
+    { path: "", operator: "=", value: "" },
+    ["data", "condition"],
+    node
+  );
 
   const onChangeCondition = (field: keyof IfNodeCondition, value: unknown) => {
-    Object.assign(state.condition, { [field]: value });
-    setState(state);
-    updateNodeData(id, data);
+    if (!node) return;
+    const newData = R.assocPath(["data", "condition", field], value, node);
+    updateNodeData(id, newData.data);
   };
 
   return (
@@ -39,7 +45,7 @@ export default function IfNode({ id, data }: NodeProps<IfNodeData>) {
         <input
           id={`${id}_inputPath`}
           name="inputPath"
-          defaultValue={""}
+          value={path}
           onChange={(evt) => onChangeCondition("path", evt.target.value)}
         />
 
@@ -47,9 +53,10 @@ export default function IfNode({ id, data }: NodeProps<IfNodeData>) {
         <select
           id={`${id}_operator`}
           name="operator"
+          value={operator}
           onChange={(evt) => onChangeCondition("operator", evt.target.value)}
         >
-          {Array.from(OPERATORS_SET).map((operator) => (
+          {OPERATORS_LIST.map((operator) => (
             <option key={operator}>{operator}</option>
           ))}
         </select>
@@ -58,7 +65,7 @@ export default function IfNode({ id, data }: NodeProps<IfNodeData>) {
         <input
           id={`${id}_value`}
           name="value"
-          defaultValue={""}
+          value={value}
           onChange={(evt) => onChangeCondition("value", evt.target.value)}
         />
       </div>
