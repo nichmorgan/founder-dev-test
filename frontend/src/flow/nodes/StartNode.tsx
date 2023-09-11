@@ -1,7 +1,7 @@
 import { Handle, NodeProps, Position } from "reactflow";
 import useBoundStore from "../lib/storage";
 
-// import "./StartNode.css";
+import "./StartNode.css";
 
 export interface StartNodeData {
   inputPath: string;

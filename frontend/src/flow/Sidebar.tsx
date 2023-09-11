@@ -23,11 +23,11 @@ export default () => {
         Start Node
       </div>
       <div
-        className="node"
-        onDragStart={(event) => onDragStart(event, "default")}
+        className="node if-node"
+        onDragStart={(event) => onDragStart(event, NodeTypes.IfNode)}
         draggable
       >
-        Default Node
+        If Node
       </div>
       <div
         className="node output"

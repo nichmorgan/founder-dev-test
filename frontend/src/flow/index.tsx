@@ -5,7 +5,6 @@ import ReactFlow, {
   ReactFlowInstance,
   Node,
 } from "reactflow";
-import { shallow } from "zustand/shallow";
 
 import "reactflow/dist/style.css";
 
@@ -16,6 +15,7 @@ import StartNode from "./nodes/StartNode";
 import "./Flow.css";
 import NodeTypes from "./lib/node.types";
 import generateNodeId from "./lib/helpers/generate.node.id";
+import IfNode from "./nodes/IfNode";
 
 const selector = (state: StorageState) => ({
   nodes: state.nodes,
@@ -30,12 +30,15 @@ const selector = (state: StorageState) => ({
 const Flow = () => {
   const reactFlowWrapper = useRef<HTMLInputElement>(null);
   const { nodes, edges, appendNodes, onNodesChange, onEdgesChange, onConnect } =
-    useBoundStore(selector, shallow);
+    useBoundStore(selector);
 
   const [reactFlowInstance, setReactFlowInstance] =
     useState<ReactFlowInstance | null>(null);
 
-  const nodeTypes = useMemo(() => ({ [NodeTypes.StartNode]: StartNode }), []);
+  const nodeTypes = useMemo(
+    () => ({ [NodeTypes.StartNode]: StartNode, [NodeTypes.IfNode]: IfNode }),
+    []
+  );
 
   const onDragOver = useCallback((event: React.DragEvent) => {
     event.preventDefault();
