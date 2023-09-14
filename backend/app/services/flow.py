@@ -6,8 +6,10 @@ class FlowService:
     def __init__(self, repository=session.flow_collection) -> None:
         self._repository = repository
 
-    def find_by_id(self, id: str) -> Flow:
+    def find_by_id(self, id: str) -> Flow | None:
         document = self._repository.find_one({"id": id}, projection={"_id": False})
+        if document is None: 
+            return None
         return Flow.model_validate(document)
 
     def save(self, flow: Flow) -> None:

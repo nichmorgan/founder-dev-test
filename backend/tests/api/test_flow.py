@@ -29,3 +29,8 @@ def test_restore(client: TestClient, flow_factory: FlowFactory):
     response = client.get(f"/flow/restore/{flow.id}")
     assert response.status_code == status.HTTP_200_OK
     assert Flow.model_validate(response.json()) == flow
+
+
+def test_restore_fail(client: TestClient):
+    response = client.get("/flow/restore/abc")
+    assert response.status_code == status.HTTP_404_NOT_FOUND
