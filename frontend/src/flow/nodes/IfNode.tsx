@@ -3,6 +3,7 @@ import useBoundStore, { StorageState } from "../lib/storage";
 import * as R from "ramda";
 
 import "./IfNode.css";
+import { useEffect } from "react";
 
 const OPERATORS_LIST = ["=", "<", "<=", ">=", ">"] as const;
 export type IfOperator = (typeof OPERATORS_LIST)[number];
@@ -30,6 +31,10 @@ export default function IfNode({ id }: NodeProps<Partial<IfNodeData>>) {
     ["data", "condition"],
     node
   );
+
+  useEffect(() => {
+    updateNodeData(id, { condition: { path, operator, value } });
+  }, []);
 
   const onChangeCondition = (field: keyof IfNodeCondition, value: unknown) => {
     if (!node) return;

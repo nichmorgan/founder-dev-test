@@ -2,6 +2,7 @@ import { Handle, NodeProps, Position } from "reactflow";
 import "./SetNode.css";
 import useBoundStore, { StorageState } from "../lib/storage";
 import * as R from "ramda";
+import { useEffect } from "react";
 
 export interface SetNodeData {
   path: string;
@@ -22,6 +23,10 @@ export default function SetNode({ id }: NodeProps<SetNodeData>) {
     ["data"],
     node
   );
+
+  useEffect(() => {
+    updateNodeData(id, { path, value });
+  }, []);
 
   const onChangeCondition = (field: keyof SetNodeData, value: string) => {
     if (!node) return;

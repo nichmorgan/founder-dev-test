@@ -1,7 +1,8 @@
-import { Panel, ReactFlowJsonObject } from "reactflow";
+import { Panel } from "reactflow";
 import useBoundStore, { StorageState } from "./lib/storage";
 
 import "./StoragePanel.css";
+import server from "./lib/gateway/server";
 
 const FLOW_KEY = "example-flow";
 
@@ -22,18 +23,16 @@ const selector = (state: StorageState) => ({
 export default function StoragePanel() {
   const { flowInstance, setNodes, setEdges } = useBoundStore(selector);
 
-  const onSave = () => {
-    const flow = flowInstance?.toObject();
-    if (flow) localStorage.setItem(FLOW_KEY, JSON.stringify(flow));
-  };
-
-  const onRestore = () => {
+  const onSave = async () => {
     if (!flowInstance) return;
 
-    const flowObject = localStorage.getItem(FLOW_KEY);
-    if (!flowObject) return;
+    await server.saveFlow(FLOW_KEY, flowInstance.toObject());
+  };
 
-    const flow: ReactFlowJsonObject = JSON.parse(flowObject);
+  const onRestore = async () => {
+    if (!flowInstance) return;
+
+    const flow = await server.getFlow(FLOW_KEY);
     const { x = 0, y = 0, zoom = 1 } = flow.viewport;
 
     setNodes(flow.nodes);

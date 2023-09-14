@@ -50,10 +50,10 @@ const Flow = () => {
     []
   );
 
-  const onDragOver = useCallback((event: React.DragEvent) => {
+  const onDragOver = (event: React.DragEvent) => {
     event.preventDefault();
     event.dataTransfer.dropEffect = "move";
-  }, []);
+  };
 
   const onDrop = useCallback(
     (event: React.DragEvent) => {

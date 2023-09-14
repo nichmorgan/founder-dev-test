@@ -1,8 +1,9 @@
 import { Handle, NodeProps, Position } from "reactflow";
 import useBoundStore, { StorageState } from "../lib/storage";
+import * as R from "ramda";
 
 import "./StartNode.css";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 
 export interface StartNodeData {
   inputPath: string;
@@ -16,12 +17,21 @@ const selector = (state: StorageState) => ({
 export default function StartNode({ id }: NodeProps<StartNodeData>) {
   const { updateNodeData, getNode } = useBoundStore(selector);
 
+  const node = getNode(id);
+  const { inputPath } = R.pathOr<StartNodeData>(
+    { inputPath: "" },
+    ["data"],
+    node
+  );
+
+  useEffect(() => {
+    updateNodeData(id, { inputPath });
+  }, []);
+
   const handleChangeInputPath = (evt: React.ChangeEvent<HTMLInputElement>) => {
     const inputPath = evt.target.value;
     updateNodeData(id, { inputPath });
   };
-
-  const onChangeInputPath = useCallback(handleChangeInputPath, []);
 
   return (
     <div className="node start-node">
@@ -30,8 +40,8 @@ export default function StartNode({ id }: NodeProps<StartNodeData>) {
         <input
           id="inputPath"
           name="inputPath"
-          value={getNode(id)?.data.inputPath}
-          onChange={onChangeInputPath}
+          value={inputPath}
+          onChange={handleChangeInputPath}
         />
       </div>
       <Handle type="source" position={Position.Bottom} isConnectable={true} />
