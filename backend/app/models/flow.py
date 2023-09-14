@@ -1,9 +1,9 @@
 from typing import TypeVar, Generic
-from pydantic import BaseModel, Field, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from enum import Enum
 
+
 T = TypeVar("T")
-BASE_CONFIG = ConfigDict(extra="allow")
 
 
 class NodeTypes(str, Enum):
@@ -13,14 +13,14 @@ class NodeTypes(str, Enum):
 
 
 class Edge(BaseModel):
-    model_config = BASE_CONFIG
+    model_config = ConfigDict(extra="allow")
 
     source: str
     target: str
 
 
 class Node(BaseModel, Generic[T]):
-    model_config = BASE_CONFIG
+    model_config = ConfigDict(extra="allow")
 
     id: str
     data: T
@@ -28,7 +28,7 @@ class Node(BaseModel, Generic[T]):
 
 
 class Flow(BaseModel):
-    model_config = BASE_CONFIG
+    model_config = ConfigDict(extra="allow")
 
     id: str
     edges: list[Edge]
