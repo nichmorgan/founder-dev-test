@@ -12,31 +12,44 @@ from tests.engine.utils import (
 
 NodeTestData = TestData[IfNodeConfig]
 
-EQ_YES_TEST_DATA = NodeTestData(
-    title="Eq: Yes",
-    edges=[
-        Edge(source=DEFAULT_SOURCE, target="2", sourceHandle=TargetHandle.no),
-        Edge(source=DEFAULT_SOURCE, target="3", sourceHandle=TargetHandle.yes),
-    ],
-    config=IfNodeConfig(
-        path="a.b", operator=IfOperator.eq, value=DEFAULT_PAYLOAD["a"]["b"]
-    ),
-    expected_edge_index=1,
-    expected_result=DEFAULT_PAYLOAD,
-)
 
-EQ_NO_TEST_DATA = NodeTestData(**EQ_YES_TEST_DATA.model_dump(by_alias=True))
-EQ_NO_TEST_DATA.title = "Eq: No"
-EQ_NO_TEST_DATA.config.value += 1
-EQ_NO_TEST_DATA.expected_edge_index = 0
+def node_test_data_factory(operator: IfOperator, result: bool) -> NodeTestData:
+    value = DEFAULT_PAYLOAD["a"]["b"]
+
+    if result:
+        if operator == IfOperator.lt:
+            value += 1
+        elif operator == IfOperator.gt:
+            value -= 1
+    else:
+        if operator in [IfOperator.eq, IfOperator.gte]:
+            value += 1
+        elif operator == IfOperator.lte:
+            value -= 1
+
+    return NodeTestData(
+        title=f"{IfOperator(operator).name}: {'Yes' if result else 'No'}",
+        edges=[
+            Edge(source=DEFAULT_SOURCE, target="2", sourceHandle=TargetHandle.yes),
+            Edge(source=DEFAULT_SOURCE, target="3", sourceHandle=TargetHandle.no),
+        ],
+        config=IfNodeConfig(
+            path="a.b",
+            operator=operator,
+            value=value,
+        ),
+        expected_edge_index=0 if result else 1,
+        expected_result=DEFAULT_PAYLOAD,
+    )
 
 
-EQ_TESTDATA: list[NodeTestData] = [
-    EQ_YES_TEST_DATA,
-    EQ_NO_TEST_DATA,
+TEST_DATA = [
+    node_test_data_factory(operator, result)
+    for result in [True, False]
+    for operator in list(IfOperator)
 ]
 
 
-@pytest.mark.parametrize("context", EQ_TESTDATA, ids=id_fn)
-def test_eq(context: NodeTestData):
+@pytest.mark.parametrize("context", TEST_DATA, ids=id_fn)
+def test(context: NodeTestData):
     factory_executor(context, IfNode)
