@@ -1,7 +1,6 @@
-from pydantic import BaseModel, Field
 import pydash
+from pydantic import BaseModel, Field
 from app.engine.nodes.base import BaseNode, ExecutionResult
-from app.models.flow import Edge
 
 
 class StartNodeConfig(BaseModel):

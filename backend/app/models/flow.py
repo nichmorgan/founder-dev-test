@@ -19,7 +19,6 @@ class Edge(BaseModel):
     source_handle: str | None = Field(default=None, alias="sourceHandle")
 
     target: str
-    target_handle: str | None = Field(default=None, alias="targetHandle")
 
 
 class Node(BaseModel, Generic[T]):
