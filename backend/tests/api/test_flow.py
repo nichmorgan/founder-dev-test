@@ -21,11 +21,10 @@ def test_save(client: TestClient, flow_factory: FlowFactory):
     assert extra_field in flowInDb
 
 
-# TODO: Fix alias bug
 def test_restore(client: TestClient, flow_factory: FlowFactory):
     flow: Flow = flow_factory.build()
 
-    flow_collection.insert_one(flow.model_dump())
+    flow_collection.insert_one(flow.model_dump(by_alias=True))
 
     response = client.get(f"/flow/restore/{flow.id}")
     assert response.status_code == status.HTTP_200_OK
