@@ -4,8 +4,6 @@ from pydantic import BaseModel, Field
 from app.engine.nodes.base import BaseNode, ExecutionResult, NodeConfig
 from enum import Enum
 
-from app.models.flow import Edge
-
 
 class IfOperator(str, Enum):
     eq = "="

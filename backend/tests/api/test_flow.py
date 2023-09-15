@@ -21,6 +21,7 @@ def test_save(client: TestClient, flow_factory: FlowFactory):
     assert extra_field in flowInDb
 
 
+# TODO: Fix alias bug
 def test_restore(client: TestClient, flow_factory: FlowFactory):
     flow: Flow = flow_factory.build()
 
