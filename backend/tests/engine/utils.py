@@ -2,11 +2,12 @@ from typing import Any, Generic, Type, TypeVar
 from pydantic import BaseModel, field_validator, FieldValidationInfo
 from app.engine.nodes.base import NodeConfig
 from app.engine.nodes.if_node import IfNode, IfNodeConfig
+from app.engine.nodes.set_node import SetNode, SetNodeConfig
 from app.engine.nodes.start_node import StartNode, StartNodeConfig
 from app.models.flow import Edge
 
-TNode = TypeVar("TNode", IfNode, StartNode)
-TConfig = TypeVar("TConfig", IfNodeConfig, StartNodeConfig)
+TNode = TypeVar("TNode", IfNode, StartNode, SetNode)
+TConfig = TypeVar("TConfig", IfNodeConfig, StartNodeConfig, SetNodeConfig)
 
 DEFAULT_PAYLOAD = {"a": {"b": 1}}
 DEFAULT_SOURCE = "1"
