@@ -15,7 +15,7 @@ class FlowService:
     def save(self, flow: Flow) -> None:
         self._repository.replace_one(
             filter={"id": flow.id},
-            replacement=flow.model_dump(),
+            replacement=flow.model_dump(by_alias=True),
             upsert=True,
         )
 
