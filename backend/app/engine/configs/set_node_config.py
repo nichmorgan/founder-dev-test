@@ -4,5 +4,5 @@ from pydantic import BaseModel
 
 
 class SetNodeConfig(BaseModel):
-    path: str
+    path: str = ""
     value: Any

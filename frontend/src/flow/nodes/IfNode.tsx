@@ -8,14 +8,10 @@ import { useEffect } from "react";
 const OPERATORS_LIST = ["=", "<", "<=", ">=", ">"] as const;
 export type IfOperator = (typeof OPERATORS_LIST)[number];
 
-export interface IfNodeCondition {
+export interface IfNodeData {
   path: string;
   operator: IfOperator;
   value: string;
-}
-
-export interface IfNodeData {
-  condition: IfNodeCondition;
 }
 
 const selector = (state: StorageState) => ({
@@ -26,19 +22,19 @@ const selector = (state: StorageState) => ({
 export default function IfNode({ id }: NodeProps<Partial<IfNodeData>>) {
   const { getNode, updateNodeData } = useBoundStore(selector);
   const node = getNode<IfNodeData>(id);
-  const { path, operator, value } = R.pathOr<IfNodeCondition>(
+  const { path, operator, value } = R.pathOr<IfNodeData>(
     { path: "", operator: "=", value: "" },
-    ["data", "condition"],
+    ["data"],
     node
   );
 
   useEffect(() => {
-    updateNodeData(id, { condition: { path, operator, value } });
+    updateNodeData(id, { path, operator, value });
   }, []);
 
-  const onChangeCondition = (field: keyof IfNodeCondition, value: unknown) => {
+  const onChangeCondition = (field: keyof IfNodeData, value: unknown) => {
     if (!node) return;
-    const newData = R.assocPath(["data", "condition", field], value, node);
+    const newData = R.assocPath(["data", field], value, node);
     updateNodeData(id, newData.data);
   };
 

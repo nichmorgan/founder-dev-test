@@ -26,7 +26,7 @@ class IfNodeExecutor(NodeExecutor[IfNodeConfig]):
 
     def _validate_edges(self) -> None:
         for edge in self._edges:
-            if edge.source_handle not in self._source_handle.values():
+            if (edge.source_handle or "").lower() not in self._source_handle.values():
                 raise ValueError("All edges must has an valid source_handle")
 
     def execute(self, data: dict) -> ExecutionResult:
