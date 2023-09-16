@@ -1,13 +1,9 @@
 import pydash
-from pydantic import BaseModel, Field
-from app.engine.nodes.base import BaseNode, ExecutionResult
+from app.engine.configs.start_node_config import StartNodeConfig
+from app.engine.executors.base_executor import NodeExecutor, ExecutionResult
 
 
-class StartNodeConfig(BaseModel):
-    input_path: str = Field(default="", alias="inputPath")
-
-
-class StartNode(BaseNode[StartNodeConfig]):
+class StartNodeExecutor(NodeExecutor[StartNodeConfig]):
     def execute(self, data: dict) -> ExecutionResult:
         result = pydash.get(data, self._config.input_path, None)
         if result is None:

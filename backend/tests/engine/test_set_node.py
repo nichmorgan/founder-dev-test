@@ -1,11 +1,11 @@
-from app.engine.nodes.set_node import SetNode, SetNodeConfig
+from app.engine.executors.set_node_executor import SetNodeExecutor, SetNodeConfig
 from app.models.flow import Edge
 import pytest
 import pydash
 
 from tests.engine.utils import (
-    DEFAULT_PAYLOAD,
-    DEFAULT_SOURCE,
+    get_default_source,
+    get_default_payload,
     TestData,
     factory_executor,
     id_fn,
@@ -16,11 +16,11 @@ NodeTestData = TestData[SetNodeConfig]
 INSERT_TEST_DATA_CONFIG = SetNodeConfig(path="a.c", value=2)
 INSERT_NODE_TEST_DATA = NodeTestData(
     title="insert",
-    edges=[Edge(source=DEFAULT_SOURCE, target="321")],
+    edges=[Edge(source=get_default_source(), target="321")],
     config=INSERT_TEST_DATA_CONFIG,
     expected_edge_index=0,
     expected_result=pydash.set_(
-        DEFAULT_PAYLOAD,
+        get_default_payload(),
         INSERT_TEST_DATA_CONFIG.path,
         INSERT_TEST_DATA_CONFIG.value,
     ),
@@ -38,4 +38,4 @@ TEST_DATA: list[NodeTestData] = [INSERT_NODE_TEST_DATA, OVERRIDE_NODE_TEST_DATA]
 
 @pytest.mark.parametrize("context", TEST_DATA, ids=id_fn)
 def test(context: NodeTestData):
-    factory_executor(context, SetNode)
+    factory_executor(context, SetNodeExecutor)

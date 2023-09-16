@@ -35,3 +35,9 @@ class Flow(BaseModel):
     id: str
     edges: list[Edge]
     nodes: list[Node]
+
+    def get_node_by_id(self, id: str) -> Node:
+        for node in self.nodes:
+            if node.id == id:
+                return node
+        raise ValueError(f"Id '{id}' not found.")

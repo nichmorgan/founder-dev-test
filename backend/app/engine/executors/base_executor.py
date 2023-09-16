@@ -1,19 +1,19 @@
 from abc import ABC, abstractmethod
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 from app.models.flow import Edge
 
 from pydantic import BaseModel, field_validator, validate_call
 
-T = TypeVar("T", bound=BaseModel)
+TConfig = TypeVar("TConfig", bound=BaseModel)
 
 
 class ExecutionResult(BaseModel):
-    data: dict
+    data: Any
     next_nodes: set[str]
 
 
-class NodeConfig(BaseModel, Generic[T]):
-    config: T
+class NodeConfig(BaseModel, Generic[TConfig]):
+    config: TConfig
     edges: list[Edge]
 
     @field_validator("edges")
@@ -25,9 +25,9 @@ class NodeConfig(BaseModel, Generic[T]):
         return edges
 
 
-class BaseNode(ABC, Generic[T]):
+class NodeExecutor(ABC, Generic[TConfig]):
     @validate_call
-    def __init__(self, params: NodeConfig[T]) -> None:
+    def __init__(self, params: NodeConfig[TConfig]) -> None:
         self._config = params.config
         self._edges = params.edges
 

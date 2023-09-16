@@ -1,23 +1,28 @@
 from typing import Any, Generic, Type, TypeVar
 from pydantic import BaseModel, field_validator, FieldValidationInfo
-from app.engine.nodes.base import NodeConfig
-from app.engine.nodes.if_node import IfNode, IfNodeConfig
-from app.engine.nodes.set_node import SetNode, SetNodeConfig
-from app.engine.nodes.start_node import StartNode, StartNodeConfig
+from app.engine.executors.base_executor import NodeConfig
+from app.engine.executors.if_node_executor import IfNodeExecutor, IfNodeConfig
+from app.engine.executors.set_node_executor import SetNodeExecutor, SetNodeConfig
+from app.engine.executors.start_node_executor import StartNodeExecutor, StartNodeConfig
 from app.models.flow import Edge
 
-TNode = TypeVar("TNode", IfNode, StartNode, SetNode)
+TNode = TypeVar("TNode", IfNodeExecutor, StartNodeExecutor, SetNodeExecutor)
 TConfig = TypeVar("TConfig", IfNodeConfig, StartNodeConfig, SetNodeConfig)
 
-DEFAULT_PAYLOAD = {"a": {"b": 1}}
-DEFAULT_SOURCE = "1"
+
+def get_default_source() -> str:
+    return "1"
+
+
+def get_default_payload() -> dict:
+    return {"a": {"b": 1}}
 
 
 class TestData(BaseModel, Generic[TConfig]):
     title: str | None = None
     edges: list[Edge] = []
     config: TConfig
-    payload: dict = DEFAULT_PAYLOAD
+    payload: dict = get_default_payload()
     expected_edge_index: int | None = None
     expected_result: Any
 

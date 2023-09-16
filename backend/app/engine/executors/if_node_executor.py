@@ -1,16 +1,7 @@
-from typing import Any
 import pydash
-from pydantic import BaseModel, Field
-from app.engine.nodes.base import BaseNode, ExecutionResult, NodeConfig
+from app.engine.configs.if_node_config import IfNodeConfig, IfOperator
+from app.engine.executors.base_executor import NodeExecutor, ExecutionResult, NodeConfig
 from enum import Enum
-
-
-class IfOperator(str, Enum):
-    eq = "="
-    lt = "<"
-    lte = "<="
-    gt = ">"
-    gte = ">="
 
 
 class TargetHandle(str, Enum):
@@ -18,13 +9,7 @@ class TargetHandle(str, Enum):
     yes = "yes"
 
 
-class IfNodeConfig(BaseModel):
-    path: str = ""
-    operator: IfOperator
-    value: Any
-
-
-class IfNode(BaseNode[IfNodeConfig]):
+class IfNodeExecutor(NodeExecutor[IfNodeConfig]):
     _operator_map = {
         IfOperator.eq: lambda field, value: field == value,
         IfOperator.lt: lambda field, value: field < value,
