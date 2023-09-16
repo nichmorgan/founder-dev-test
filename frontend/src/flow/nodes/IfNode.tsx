@@ -22,11 +22,10 @@ const selector = (state: StorageState) => ({
 export default function IfNode({ id }: NodeProps<Partial<IfNodeData>>) {
   const { getNode, updateNodeData } = useBoundStore(selector);
   const node = getNode<IfNodeData>(id);
-  const { path, operator, value } = R.pathOr<IfNodeData>(
-    { path: "", operator: "=", value: "" },
-    ["data"],
-    node
-  );
+
+  const path = R.pathOr<string>("", ["data", "path"], node);
+  const operator = R.pathOr<IfOperator>("=", ["data", "operator"], node);
+  const value = R.pathOr<string>("", ["data", "value"], node);
 
   useEffect(() => {
     updateNodeData(id, { path, operator, value });
