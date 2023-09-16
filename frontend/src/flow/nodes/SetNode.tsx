@@ -18,11 +18,9 @@ export default function SetNode({ id }: NodeProps<SetNodeData>) {
   const { updateNodeData, getNode } = useBoundStore(selector);
 
   const node = getNode(id);
-  const { path, value } = R.pathOr<SetNodeData>(
-    { path: "", value: "" },
-    ["data"],
-    node
-  );
+
+  const path = R.pathOr("", ["data", "path"], node);
+  const value = R.pathOr("", ["data", "value"], node);
 
   useEffect(() => {
     updateNodeData(id, { path, value });

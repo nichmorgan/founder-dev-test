@@ -3,7 +3,7 @@ import useBoundStore, { StorageState } from "../lib/storage";
 import * as R from "ramda";
 
 import "./StartNode.css";
-import { useCallback, useEffect } from "react";
+import { useEffect } from "react";
 
 export interface StartNodeData {
   inputPath: string;
@@ -18,11 +18,7 @@ export default function StartNode({ id }: NodeProps<StartNodeData>) {
   const { updateNodeData, getNode } = useBoundStore(selector);
 
   const node = getNode(id);
-  const { inputPath } = R.pathOr<StartNodeData>(
-    { inputPath: "" },
-    ["data"],
-    node
-  );
+  const inputPath = R.pathOr("", ["data", "inputPath"], node);
 
   useEffect(() => {
     updateNodeData(id, { inputPath });
